@@ -17,4 +17,4 @@ OOBE画面では Shiftキーを押しながらF10を押すとコマンドプロ�
 
 ネットワークを切断した状態でOOBE画面を進めることができる `oobe\bypassnro` も別途覚えておくとローカルアカウントでセットアップしたいときに便利。
 
-<?# OEmbed "https://forest.watch.impress.co.jp/docs/serial/yajiuma/1401644.html" /?>
+[oembed:"https://forest.watch.impress.co.jp/docs/serial/yajiuma/1401644.html"]

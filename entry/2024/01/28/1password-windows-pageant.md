@@ -14,7 +14,7 @@ SSHの秘密鍵、皆さんどうやって管理されてるんでしょう。
 
 ただ、普段パスワード管理で利用している1PasswordにSSHエージェント機能が搭載され(2022年のv8.6で)、わざわざ秘密鍵をファイルとして管理しなくとも、統一的かつ安全に管理することができるようになったので、重い腰を上げてそちらに置き換えることにしました。  
 
-<?# OEmbed "https://forest.watch.impress.co.jp/docs/news/1396447.html" /?>
+[oembed:"https://forest.watch.impress.co.jp/docs/news/1396447.html"]
 
 なお、この記事はWindows環境に特化した内容になってます。  
 LinuxやMacは多分もっと簡単かつ他にも記事が多くあるのでそちらをご参照ください。  
@@ -77,7 +77,7 @@ git config --global core.sshCommand "C:/Windows/System32/OpenSSH/ssh.exe"
 
 そこで登場するのが WinSSH-Pageantです。  
 
-<?# OEmbed "https://github.com/ndbeals/winssh-pageant" /?>
+[oembed:"https://github.com/ndbeals/winssh-pageant"]
 
 OpenSSHのSSHエージェント(今回は1PasswordのSSHエージェント)とPageantをサポートしているSSHソフトウェアの間でプロキシとして動いてくれるソフトです。  
 
@@ -133,6 +133,6 @@ PreferencesのSSHメニューから、 `Use local SSH agent` にチェックを�
 
 
 ## 参考サイト
-<?# OEmbed "https://developer.1password.com/docs/ssh/get-started/" /?>
+[oembed:"https://developer.1password.com/docs/ssh/get-started/"]
 
-<?# OEmbed "https://hiro20180901.com/2023/02/13/keepassxc-ssh-agent-pageant-software-and-git-for-windows/" /?>
+[oembed:"https://hiro20180901.com/2023/02/13/keepassxc-ssh-agent-pageant-software-and-git-for-windows/"]

@@ -12,7 +12,7 @@ Tags:
 ### UPSのバッテリー寿命  
 音の出所を探したところ、NASへ電力を供給しているオムロン製UPS、BY50Sからなってました。  
 
-<?# AmazonAffiliate B07S1LRJ63 /?>
+[amazon:B07S1LRJ63]
 
 また、バッテリー交換ランプが点灯していることから、どうやらバッテリーがお陀仏の模様。  
  
@@ -28,7 +28,7 @@ Tags:
 購入時にお客様登録をしている場合、バッテリーの無料提供サービスが利用できるのですが、残念ながら購入したのが2018年9月6日。  
 UPS本体購入日から3年間のみなので、ぎりぎり対象外・・・。  
 
-<?# OEmbed "https://socialsolution.omron.com/jp/ja/products_service/ups/support/mushou.html" /?>
+[oembed:"https://socialsolution.omron.com/jp/ja/products_service/ups/support/mushou.html"]
 
 とりあえずブザーだけ止めて、バッテリー交換することにしました。  
 
@@ -42,7 +42,7 @@ BY50S専用の交換バッテリー(型番：BYB50S)は手に入れにくくか�
 
 本体のサイズ、端子の形状（ファストン端子No.250らしい）が同じで、サイクルバッテリーのものであればとりあえず問題ないそうで、調べた限り割合値段がお安く、かつ実績のあるLONG社の `WP1236W` を購入。  
 
-<?# AmazonAffiliate B01KQ5BQHE /?>
+[amazon:B01KQ5BQHE]
 
 ### バッテリー交換作業  
 
@@ -99,6 +99,6 @@ UPS本体とつながる赤と黒のケーブルが見えてくるので、こ�
 
 #### 参考
 
-<?# OEmbed "https://voltechno.com/blog/omron-upsbattery/" /?>
+[oembed:"https://voltechno.com/blog/omron-upsbattery/"]
 
-<?# OEmbed "https://kixi.jp/5493" /?>
+[oembed:"https://kixi.jp/5493"]

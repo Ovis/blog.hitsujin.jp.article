@@ -42,7 +42,7 @@ pveam update
 
 下記の記事が詳しい。 
 
-<?# OEmbed "https://qiita.com/waigoma/items/762aa95e3d564d8955d4" /?>
+[oembed:"https://qiita.com/waigoma/items/762aa95e3d564d8955d4"]
 
 ### LXCコンテナ作成
 
@@ -108,6 +108,6 @@ DNSの指定。
 
 
 ### 参考
-<?# OEmbed "https://qiita.com/onokatio/items/969e3b470359e4c47a04" /?>
+[oembed:"https://qiita.com/onokatio/items/969e3b470359e4c47a04"]
 
-<?# OEmbed "https://qiita.com/waigoma/items/762aa95e3d564d8955d4" /?>
+[oembed:"https://qiita.com/waigoma/items/762aa95e3d564d8955d4"]

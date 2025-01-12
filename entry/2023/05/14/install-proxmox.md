@@ -37,7 +37,7 @@ Tags:
 ダウンロードしたISOイメージをDVDに焼くか、USBメモリーでブートできる形で書き込み。  
 私はIODDというイメージブート可能なストレージを持っているのでこれを利用。  
 
-<?# AmazonAffiliate B0B3HQMV5T /?>
+[amazon:B0B3HQMV5T]
 
 インストールするマシンのUEFIからCPU Virtualizationのサポートを有効化しておいたうえでブート。  
 

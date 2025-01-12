@@ -11,7 +11,7 @@ Tags:
 
 ### Windows 11のISOイメージダウンロード
 
-<?# OEmbed "https://www.microsoft.com/ja-jp/software-download/windows11" /?>
+[oembed:"https://www.microsoft.com/ja-jp/software-download/windows11"]
 
 Microsoftのサイトからダウンロードできる。  
 

@@ -73,7 +73,7 @@ exit nodeが不要なら `--advertise-exit-node --accept-routes` のオプショ
 
 ![](installtailscale.png)
 
-<?# OEmbed "https://blog.hitsujin.jp/entry/2022/01/18/120000" /?>
+[oembed:"https://blog.hitsujin.jp/entry/2022/01/18/120000"]
 
 Tailscaleが立ち上がったらキーが失効しないよう[Machines](https://login.tailscale.com/admin/machines)を開き、該当のマシンのメニューから `Disable key expiry` をしておくこと。
 
@@ -154,7 +154,7 @@ AdGuard標準のブロックリストだけだと日本国内の広告に対処�
 なんJ AdGuard部 Wikiなどを参考にリスト追加。  
 悪質な広告だけをブロックするフィルターがあるといいのだけど。  
 
-<?# OEmbed "https://wikiwiki.jp/nanj-adguard/%E3%83%95%E3%82%A3%E3%83%AB%E3%82%BF%E3%83%BC%E3%83%AA%E3%82%B9%E3%83%88" /?>
+[oembed:"https://wikiwiki.jp/nanj-adguard/%E3%83%95%E3%82%A3%E3%83%AB%E3%82%BF%E3%83%BC%E3%83%AA%E3%82%B9%E3%83%88"]
 
 ### ルーター・WindowsのDNS設定
 
@@ -188,12 +188,12 @@ Nameserverの項目に先ほどメモっておいたIPアドレスを入力し�
 
 ### 参考
 
-<?# OEmbed "https://eginoy.com/tailscale%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%A6%E5%A4%96%E5%87%BA%E5%85%88%E3%81%A7%E3%82%82%E5%BA%83%E5%91%8A%E3%83%96%E3%83%AD%E3%83%83%E3%82%AF/" /?>
+[oembed:"https://eginoy.com/tailscale%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%A6%E5%A4%96%E5%87%BA%E5%85%88%E3%81%A7%E3%82%82%E5%BA%83%E5%91%8A%E3%83%96%E3%83%AD%E3%83%83%E3%82%AF/"]
 
-<?# OEmbed "https://note.com/klayer123/n/n02c3b6f8cde3" /?>
+[oembed:"https://note.com/klayer123/n/n02c3b6f8cde3"]
 
-<?# OEmbed "https://www.330k.info/essay/ubuntu-softether-adguardhome-dns-setting/" /?>
+[oembed:"https://www.330k.info/essay/ubuntu-softether-adguardhome-dns-setting/"]
 
-<?# OEmbed "https://qiita.com/shora_kujira16/items/31d09b373809a5a44ae5" /?>
+[oembed:"https://qiita.com/shora_kujira16/items/31d09b373809a5a44ae5"]
 
-<?# OEmbed "https://eginoy.com/tailscale%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%A6%E5%A4%96%E5%87%BA%E5%85%88%E3%81%A7%E3%82%82%E5%BA%83%E5%91%8A%E3%83%96%E3%83%AD%E3%83%83%E3%82%AF/" /?>
+[oembed:"https://eginoy.com/tailscale%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%A6%E5%A4%96%E5%87%BA%E5%85%88%E3%81%A7%E3%82%82%E5%BA%83%E5%91%8A%E3%83%96%E3%83%AD%E3%83%83%E3%82%AF/"]

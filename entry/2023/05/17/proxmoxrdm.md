@@ -9,7 +9,7 @@ Tags:
 
 VMware ESXiの頃はRDMの設定を行って直接読み書きできるようにでき、10年近く前にブログ記事にまとめていた。  
 
-<?# OEmbed "https://blog.hitsujin.jp/entry/2014/06/08/161357" /?>
+[oembed:"https://blog.hitsujin.jp/entry/2014/06/08/161357"]
 
 Proxmoxでも同じように設定できたので覚書き。  
 
@@ -61,4 +61,4 @@ qm set 101 -sata5 /dev/disk/by-id/ata-WDC_WD40EZRZ-00GXCB0_WD-WCC7K6RC5S88
 
 
 ### 参考
-<?# OEmbed "https://nofu.jp/wiki/virtualization/proxmox_ve_6_2_rdm" /?>
+[oembed:"https://nofu.jp/wiki/virtualization/proxmox_ve_6_2_rdm"]
