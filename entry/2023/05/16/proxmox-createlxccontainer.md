@@ -27,15 +27,15 @@ Proxmoxのシェルで下記のコマンドを実施。
 pveam update
 ```
 
-![](templatedownload1.png)
+![](templatedownload1.jpg)
 `local(host名)→CTテンプレート` から `テンプレート` ボタンを押下。  
 
-![](templatedownload2.png)
+![](templatedownload2.jpg)
 
 テンプレートのリストが表示されるので、利用したいテンプレートを選択。  
 今回はUbuntu 22.10のテンプレートを選択。  
 
-![](templatedownload3.png)
+![](templatedownload3.jpg)
 
 `ダウンロード`ボタンを押下するとProxmoxが自動的にテンプレートファイルをダウンロード、 `/var/lib/vz/template/cache` に格納してくれる。  
 
@@ -47,11 +47,11 @@ pveam update
 
 ### LXCコンテナ作成
 
-![](createlxc01.png)
+![](createlxc01.jpg)
 
 画面右上の`CTを作成` を押下。  
 
-![](createlxc02.png)
+![](createlxc02.jpg)
 
 CT IDは自動的に発行される番号でOK。 
 ホスト名は自分がわかりやすい名前を。  
@@ -61,44 +61,44 @@ CT IDは自動的に発行される番号でOK。
 パスワードはログインする際のパスワードになるので必須入力。  
 SSH公開鍵を設定しておけばProxmoxコンソールを利用せずとも好きなターミナルソフトでSSHログインできる。  
 
-![](createlxc03.png)
+![](createlxc03.jpg)
 
 テンプレートから先ほどダウンロードしたテンプレートを選択。  
 
-![](createlxc04.png)
+![](createlxc04.jpg)
 
 LXCを配置したいストレージの選択とサイズを指定。  
 
-![](createlxc05.png)
+![](createlxc05.jpg)
 割り当てるCPUのコア数を指定。  
 
-![](createlxc06.png)
+![](createlxc06.jpg)
 
 割り当てるメモリー量を指定。  
 
-![](createlxc07.png)
+![](createlxc07.jpg)
 
 ネットワーク設定。  
 IPアドレスをDHCPで割り当てる場合は `DHCP`に変更。  
 指定したい場合はIPv4欄には `192.168.0.100/24` のようにCIDRまで指定。 
 
-![](createlxc08.png)
+![](createlxc08.jpg)
 DNSの指定。  
 基本的にはホスト設定を使用する形で何も入れなくてもいいはず。  
 
-![](createlxc09.png)
+![](createlxc09.jpg)
 設定内容の確認。  
 問題なければ `完了` ボタンを押下。  
 
-![](createlxc10.png)
+![](createlxc10.jpg)
 
 テンプレートが展開され、コンテナが作成される。  
 
-![](createlxc11.png)
+![](createlxc11.jpg)
 
 コンテナが作成され、メニューに表示された。  
 
-![](createlxc12.png)
+![](createlxc12.jpg)
 
 作成したコンテナを選択した状態で右上の`開始`ボタン押下でコンテナ起動。  
 

@@ -72,17 +72,17 @@ exit nodeが不要なら `--advertise-exit-node --accept-routes` のオプショ
 
 上記コマンドを実行するとURLが表示されるのでブラウザで開いて認証を行う。この辺りは以前まとめたブログ記事を参照。  
 
-![](installtailscale.png)
+![](installtailscale.jpg)
 
 [oembed:"https://blog.hitsujin.jp/entry/2022/01/18/120000"]
 
 Tailscaleが立ち上がったらキーが失効しないよう[Machines](https://login.tailscale.com/admin/machines)を開き、該当のマシンのメニューから `Disable key expiry` をしておくこと。
 
-![](tailscalemachinesmenu.png)
+![](tailscalemachinesmenu.jpg)
 
 また、Exit Node(`--advertise-exit-node`)、SubnetRoute(`--advertise-routes`)を利用する場合は `Edit route settings`からそれぞれのオプションを有効にしておくこと。  
 
-![](editroutesettings.png)
+![](editroutesettings.jpg)
 
 ### AdGuard Homeインストール
 
@@ -117,7 +117,7 @@ curl -s -S -L https://raw.githubusercontent.com/AdguardTeam/AdGuardHome/master/s
 を実行。  
 curlがインストールされていない場合は `apt install curl`を実行してから。  
 
-![](installadguardhome.png)
+![](installadguardhome.jpg)
 
 展開が完了したら画面に表示されているURLをブラウザで開き、インストール作業を続行。デフォルトで日本語対応しているので楽。  
 
@@ -127,7 +127,7 @@ curlがインストールされていない場合は `apt install curl`を実行
 ### AdGuard Home設定
 
 #### DHCP機能有効化
-![](adguarddhcp.png)
+![](adguarddhcp.jpg)
 
 上部メニューからDHCP設定を開く。  
 
@@ -139,13 +139,13 @@ DHCPインターフェースの選択で対象となるインターフェース�
 #### DNS設定
 標準では上流DNSサーバーとして `Quad9` のDNSサーバーが指定されている状態。  
 
-![](adguarddns.png)
+![](adguarddns.jpg)
 
 ここはお好きに設定すればOK。  
 DNS over HTTPSが利用できるので、例えばGoogle Public DNSを利用したい場合は `https://dns.google/dns-query` を指定。  
 
 #### DNSブロックリスト
-![](adguardblocklist.png)
+![](adguardblocklist.jpg)
 
 広告ブロックの胆。  
 AdGuard標準のブロックリストだけだと日本国内の広告に対処できなかったりするので、280Blockerなどが提供してるフィルターをセット。  
@@ -171,17 +171,17 @@ IPv4にはDHCPサーバーのIPアドレスをそのまま、IPv6側はDHCPサ�
 
 例えばDHCPサーバーのIPv4アドレスが `192.168.0.100`であれば `::ffff:192.168.0.100`と設定。
 
-![](networksettings.png)
+![](networksettings.jpg)
 
 ### Tailscale側のDNS設定
 屋外で広告ブロックしたい場合のキモの設定。  
 DHCPサーバーにインストールしたTailscaleのIPアドレスをメモっておき、[TailscaleのDNS設定画面](https://login.tailscale.com/admin/dns)を開く。  
 
 `Add nameserver` の`Custom` を選択。  
-![](tailscaledns-addname1.png)
+![](tailscaledns-addname1.jpg)
 
 Nameserverの項目に先ほどメモっておいたIPアドレスを入力してSave。
-![](tailscaledns-addname2.png)
+![](tailscaledns-addname2.jpg)
 
 `Override local DNS` の設定も有効化しておくこと。
 

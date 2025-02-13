@@ -32,19 +32,19 @@ LinuxやMacは多分もっと簡単かつ他にも記事が多くあるのでそ
 
 ## 1Password側のSSHエージェント機能有効化
 
-![1Passwordメニュー](1password-menu.png)
+![1Passwordメニュー](1password-menu.jpg)
 
 1Passwordの左上にある三点アイコンをクリックしてメニューを開き、設定を開く。  
 
-![SSHエージェント機能有効化](1password-enablesshagent.png)
+![SSHエージェント機能有効化](1password-enablesshagent.jpg)
 
 
 開発者メニューから `SSHエージェントを使用する` をクリック。
 
-![](1password-enablesshagent-key.png)
+![](1password-enablesshagent-key.jpg)
 SSHキー名をディスクの保存するようにするか聞かれるのでお好きなほうを。キー名はあったほうが確実にわかりやすい。 
 
-![](disableopenssh.png)
+![](disableopenssh.jpg)
 1PasswordのSSHエージェントを利用するにはOpenSSH側(Windows 11は標準搭載)の認証エージェント機能を無効化する必要があるため、確認ダイアログが表示される。  
 この後で無効化するのでいったん `はい、OpenSSHは無効です`をクリック。  
 
@@ -55,7 +55,7 @@ SSHキー名をディスクの保存するようにするか聞かれるので�
 
 サービス管理を開いて `OpenSSH Authentication Agent` のサービスを停止、手動起動または無効に切り替え。  
 
-![](openssh-service-disable.png)
+![](openssh-service-disable.jpg)
 
 
 ## Git向け設定  
@@ -99,28 +99,28 @@ winget install winssh-pageant
 
 ### RLogin
 
-![RLogin設定](rlogin-option1.png)
+![RLogin設定](rlogin-option1.jpg)
 
 SSHエージェントを利用したいサーバーのオプションを開き、プロトコルメニューの `エージェント転送を有効にする` にチェックを入れ、 `認証キー` のボタンを押下。  
 
-![RLogin認証キー設定](rlogin-option2.png)
+![RLogin認証キー設定](rlogin-option2.jpg)
 
 認証キーリストに、1Passwordに登録されているSSHキーの一覧がずらずらと表示されるはず。  
 必要なキーにだけチェックを入れ、OKを押下。これで設定は完了。  
 
 これでサーバーに接続しようとすると
 
-![1Passwordアクセスリクエスト](1password-accessrequest1.png)
+![1Passwordアクセスリクエスト](1password-accessrequest1.jpg)
 
 こんな感じで1PasswordがSSHキーをRLoginで使用させて良いか聞いてきます。  
 
-![Windows Hello顔認証](windowshello-face.png)
+![Windows Hello顔認証](windowshello-face.jpg)
 
 OKなら認証ボタンを押すと、Windows Helloが認証をしろと言ってくるので顔認証なり指紋認証なりPIN認証なりで認証してやるとログインできます。  
 
 ### WinSCP
 
-![WinSCP](winscp.png)
+![WinSCP](winscp.jpg)
 
 WinSCP側もRLoginとそんなに変わらず。  
 サーバー設定の認証オプションから `Pageantでの認証を試みる` にチェックを入れるだけ。RLoginのようにどのSSHキーを利用するかを選択する必要はなし。  
@@ -129,7 +129,7 @@ WinSCP側もRLoginとそんなに変わらず。
 
 ### GitKraken  
 
-![GitKraken](gitkraken.png)
+![GitKraken](gitkraken.jpg)
 
 PreferencesのSSHメニューから、 `Use local SSH agent` にチェックを入れる。  
 

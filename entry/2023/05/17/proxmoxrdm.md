@@ -17,7 +17,7 @@ Proxmoxでも同じように設定できたので覚書き。
 
 ### パススルー接続するストレージのメモ  
 
-![](storagelist.png)
+![](storagelist.jpg)
 
 `(ホスト名)→ディスク` からマシンに接続されているストレージの一覧が表示されるので、対象となるストレージのモデル名とシリアル番号をメモ。  
 
@@ -26,7 +26,7 @@ Proxmoxでも同じように設定できたので覚書き。
 ```bash
 ls -l /dev/disk/by-id/
 ```
-![](storagelistcli.png)
+![](storagelistcli.jpg)
 
 ### コマンドでセット
 
@@ -58,7 +58,7 @@ qm set 101 -sata4 /dev/disk/by-id/ata-TOSHIBA_DT02ABA400_X991S1LFS75H
 qm set 101 -sata5 /dev/disk/by-id/ata-WDC_WD40EZRZ-00GXCB0_WD-WCC7K6RC5S88
 ```
 
-![](attachstorage.png)
+![](attachstorage.jpg)
 実行するとこんな感じでVMのハードウェア一覧に表示される。  
 
 
