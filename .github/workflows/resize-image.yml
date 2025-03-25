@@ -1,0 +1,70 @@
+name: Image Compression on PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  compress-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install image compression tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jpegoptim optipng
+
+      - name: Fetch base branch
+        run: |
+          git fetch origin ${{ github.base_ref }}
+
+      - name: Get changed files
+        id: get_changed_files
+        run: |
+          # 変更されたファイルを取得
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          echo "changed_files=$CHANGED_FILES" >> $GITHUB_ENV
+
+      - name: Compress changed images
+        id: compress_images
+        run: |
+          # 変更された画像ファイルのリストを作成
+          CHANGED_IMAGES=()
+          for file in ${{ env.changed_files }}; do
+            if [[ "$file" == *.jpg || "$file" == *.jpeg ]]; then
+              ORIGINAL_SIZE=$(stat -c%s "$file")
+              jpegoptim --max=80 "$file"
+              COMPRESSED_SIZE=$(stat -c%s "$file")
+              if (( (ORIGINAL_SIZE - COMPRESSED_SIZE) * 100 / ORIGINAL_SIZE >= 30 )); then
+                CHANGED_IMAGES+=("$file")
+              fi
+            elif [[ "$file" == *.png ]]; then
+              ORIGINAL_SIZE=$(stat -c%s "$file")
+              optipng "$file"
+              COMPRESSED_SIZE=$(stat -c%s "$file")
+              if (( (ORIGINAL_SIZE - COMPRESSED_SIZE) * 100 / ORIGINAL_SIZE >= 30 )); then
+                CHANGED_IMAGES+=("$file")
+              fi
+            fi
+          done
+
+          # 環境変数に圧縮した画像のリストを保存
+          if [ ${#CHANGED_IMAGES[@]} -gt 0 ]; then
+            echo "compressed_images=${CHANGED_IMAGES[*]}" >> $GITHUB_ENV
+          else
+            echo "compressed_images=" >> $GITHUB_ENV
+          fi
+
+      - name: Commit and push if images compressed
+        if: env.compressed_images != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Resize images"
+          git push origin HEAD:${{ github.head_ref }}
