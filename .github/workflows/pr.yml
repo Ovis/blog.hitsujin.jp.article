@@ -1,0 +1,48 @@
+name: Image Compression on PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  compress-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compress Images
+        id: compress
+        uses: Ovis/image-compression-action@main
+        with:
+          jpeg_max_quality: "80"
+          jpeg_compression_threshold: "5"
+          png_compression_threshold: "40"
+
+      - name: Commit compressed images
+        uses: EndBug/add-and-commit@v4
+        if: steps.compress.outputs.any_image_compressed == 'true'
+        with:
+          message: 'Compress images'
+          default_author: github_actions
+
+  send_dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch to main repo for staging/close
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          repository: Ovis/blog.hitsujin.jp
+          # プルリクエストがクローズなら close-staging、そうでなければ staging
+          event-type: ${{ github.event.action == 'closed' && 'close-staging' || 'staging' }}
+          client-payload: >
+            {
+              "branch": "${{ github.event.pull_request.head.ref }}",
+              "pull_number": ${{ github.event.number }}
+            }
