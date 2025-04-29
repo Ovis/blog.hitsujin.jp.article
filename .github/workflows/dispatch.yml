@@ -6,8 +6,12 @@ on:
       - master
 
 jobs:
-  build:
+  send_dispatch:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-              curl -vv -H "Authorization: token ${{ secrets.DISPATCH_TOKEN }}" -H "Accept: application/vnd.github.everest-preview+json" "https://api.github.com/repos/Ovis/blog.hitsujin.jp/dispatches" -d '{"event_type": "update"}'
+      - name: Dispatch to main repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          repository: Ovis/blog.hitsujin.jp
+          event-type: "update"
