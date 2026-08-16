@@ -1,23 +1,40 @@
-name: Image Compression on PR
+name: Article PR / Staging
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - closed
+
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'ステージング対象の記事リポジトリのブランチ'
+        required: true
+        default: 'master'
+        type: string
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   compress-images:
-    if: github.event.action != 'closed'
+    name: Compress images
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout article repository
+        uses: actions/checkout@v7
         with:
+          ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
 
-      - name: Compress Images
+      - name: Compress images
         id: compress
         uses: Ovis/image-compression-action@main
         with:
@@ -26,24 +43,87 @@ jobs:
           png_compression_threshold: "40"
 
       - name: Commit compressed images
-        uses: EndBug/add-and-commit@v4
         if: steps.compress.outputs.any_image_compressed == 'true'
+        uses: EndBug/add-and-commit@v10
         with:
           message: 'Compress images'
           default_author: github_actions
 
-  send_dispatch:
+  deploy-staging:
+    name: Request staging deployment
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    needs: compress-images
     runs-on: ubuntu-latest
+
     steps:
-      - name: Dispatch to main repo for staging/close
-        uses: peter-evans/repository-dispatch@v3
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
         with:
-          token: ${{ secrets.DISPATCH_TOKEN }}
+          client-id: ${{ vars.BLOG_DEPLOY_APP_CLIENT_ID }}
+          private-key: ${{ secrets.BLOG_DEPLOY_APP_PRIVATE_KEY }}
+          owner: Ovis
+          repositories: blog.hitsujin.jp
+          permission-contents: write
+
+      - name: Dispatch staging deployment
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
           repository: Ovis/blog.hitsujin.jp
-          # プルリクエストがクローズなら close-staging、そうでなければ staging
-          event-type: ${{ github.event.action == 'closed' && 'close-staging' || 'staging' }}
-          client-payload: >
+          event-type: staging
+          client-payload: |
             {
-              "branch": "${{ github.event.pull_request.head.ref }}",
-              "pull_number": ${{ github.event.number }}
+              "branch": "${{ github.event.pull_request.head.ref }}"
             }
+
+  manual-staging:
+    name: Request manual staging deployment
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.BLOG_DEPLOY_APP_CLIENT_ID }}
+          private-key: ${{ secrets.BLOG_DEPLOY_APP_PRIVATE_KEY }}
+          owner: Ovis
+          repositories: blog.hitsujin.jp
+          permission-contents: write
+
+      - name: Dispatch staging deployment
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          repository: Ovis/blog.hitsujin.jp
+          event-type: staging
+          client-payload: |
+            {
+              "branch": "${{ inputs.branch }}"
+            }
+
+  close-staging:
+    name: Close staging deployment
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.BLOG_DEPLOY_APP_CLIENT_ID }}
+          private-key: ${{ secrets.BLOG_DEPLOY_APP_PRIVATE_KEY }}
+          owner: Ovis
+          repositories: blog.hitsujin.jp
+          permission-contents: write
+
+      - name: Dispatch staging close
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          repository: Ovis/blog.hitsujin.jp
+          event-type: close-staging
+
