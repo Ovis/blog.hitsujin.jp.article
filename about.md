@@ -1,5 +1,6 @@
 ---
 IsFixedPage: true
+Published: 2009/01/25 12:00:00
 ---
 
 ### 本ブログについて  
