@@ -15,6 +15,11 @@ on:
         required: true
         default: 'master'
         type: string
+      use_prerelease:
+        description: 'BlogGenerator のプレリリース版を使用する'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -74,7 +79,8 @@ jobs:
           event-type: staging
           client-payload: |
             {
-              "branch": "${{ github.event.pull_request.head.ref }}"
+              "branch": "${{ github.event.pull_request.head.ref }}",
+              "use_prerelease": false
             }
 
   manual-staging:
@@ -101,7 +107,8 @@ jobs:
           event-type: staging
           client-payload: |
             {
-              "branch": "${{ inputs.branch }}"
+              "branch": "${{ inputs.branch }}",
+              "use_prerelease": ${{ inputs.use_prerelease }}
             }
 
   close-staging:
