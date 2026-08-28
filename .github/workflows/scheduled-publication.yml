@@ -1,0 +1,260 @@
+name: Scheduled Publication
+
+on:
+  schedule:
+    - cron: '3-59/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scheduled-publication
+  cancel-in-progress: false
+
+env:
+  ARTICLE_DIR: input
+  STATE_BRANCH: scheduled-publication-state
+  STATE_FILE: state.json
+  STATE_DIR: .scheduled-publication-state
+
+jobs:
+  check-and-dispatch:
+    name: Check and dispatch scheduled publications
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check state branch
+        id: state-branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          error_file="$RUNNER_TEMP/state-branch-error.txt"
+          if gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${STATE_BRANCH}" >/dev/null 2>"$error_file"; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          elif grep -Eq '\(HTTP 404\)|HTTP [^ ]* 404' "$error_file"; then
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          else
+            cat "$error_file" >&2
+            exit 1
+          fi
+
+      - name: Checkout articles
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          path: ${{ env.ARTICLE_DIR }}
+          persist-credentials: false
+
+      - name: Capture check time
+        id: capture-time
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "until=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+
+      - name: Initialize scheduled publication state
+        if: steps.state-branch.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UNTIL: ${{ steps.capture-time.outputs.until }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          gh auth setup-git
+          git clone \
+            --filter=blob:none \
+            --no-checkout \
+            "https://github.com/${GITHUB_REPOSITORY}.git" \
+            "$STATE_DIR"
+
+          cd "$STATE_DIR"
+          git switch --orphan "$STATE_BRANCH"
+          git rm -rf --cached . >/dev/null 2>&1 || true
+          git clean -fdx
+
+          jq -n \
+            --arg lastCheckedAt "$UNTIL" \
+            '{lastCheckedAt: $lastCheckedAt}' \
+            > "$STATE_FILE"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$STATE_FILE"
+          GIT_AUTHOR_DATE="$UNTIL" GIT_COMMITTER_DATE="$UNTIL" \
+            git commit --date="$UNTIL" -m "Update scheduled publication state"
+          git push --set-upstream origin "$STATE_BRANCH"
+
+          echo "Initialized scheduled publication state at $UNTIL; no publication check was performed."
+
+      - name: Checkout scheduled publication state
+        if: steps.state-branch.outputs.exists == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.STATE_BRANCH }}
+          path: ${{ env.STATE_DIR }}
+          persist-credentials: true
+
+      - name: Validate scheduled publication state
+        if: steps.state-branch.outputs.exists == 'true'
+        id: validate-state
+        env:
+          UNTIL: ${{ steps.capture-time.outputs.until }}
+        working-directory: ${{ env.STATE_DIR }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ ! -f "$STATE_FILE" ]]; then
+            echo "Missing $STATE_FILE." >&2
+            exit 1
+          fi
+
+          after="$(jq -er '.lastCheckedAt | select(type == "string")' "$STATE_FILE")" || {
+            echo "Invalid lastCheckedAt in $STATE_FILE." >&2
+            exit 1
+          }
+
+          if [[ ! "$after" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$ ]]; then
+            echo "lastCheckedAt must be canonical UTC ISO 8601 with second precision." >&2
+            exit 1
+          fi
+
+          parsed="$(date -u -d "$after" +'%Y-%m-%dT%H:%M:%SZ')" || {
+            echo "lastCheckedAt is not a valid timestamp." >&2
+            exit 1
+          }
+          if [[ "$parsed" != "$after" ]]; then
+            echo "lastCheckedAt is not a canonical timestamp." >&2
+            exit 1
+          fi
+
+          after_epoch="$(date -u -d "$after" +%s)"
+          until_epoch="$(date -u -d "$UNTIL" +%s)"
+          if (( after_epoch >= until_epoch )); then
+            echo "lastCheckedAt must be earlier than until: $after >= $UNTIL" >&2
+            exit 1
+          fi
+
+          echo "after=$after" >> "$GITHUB_OUTPUT"
+
+      - name: Setup .NET
+        if: steps.state-branch.outputs.exists == 'true'
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install BlogGenerator
+        if: steps.state-branch.outputs.exists == 'true'
+        shell: bash
+        run: dotnet tool install --global eSheepDev.BlogGenerator
+
+      - name: Check scheduled publications
+        if: steps.state-branch.outputs.exists == 'true'
+        id: scheduled
+        env:
+          AFTER: ${{ steps.validate-state.outputs.after }}
+          UNTIL: ${{ steps.capture-time.outputs.until }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          result="$RUNNER_TEMP/scheduled-result.json"
+          bloggen scheduled \
+            --input "$GITHUB_WORKSPACE/$ARTICLE_DIR" \
+            --after "$AFTER" \
+            --until "$UNTIL" \
+            --time-zone Asia/Tokyo \
+            > "$result"
+
+          if ! jq -e '(.hasScheduled | type) == "boolean"' "$result" >/dev/null; then
+            echo "BlogGenerator result does not contain a boolean hasScheduled." >&2
+            exit 1
+          fi
+
+          has_scheduled="$(jq -r '.hasScheduled' "$result")"
+          echo "has_scheduled=$has_scheduled" >> "$GITHUB_OUTPUT"
+
+          if jq -e '.count | type == "number" and . >= 0 and floor == .' "$result" >/dev/null 2>&1; then
+            count="$(jq -r '.count' "$result")"
+          else
+            count="unknown"
+          fi
+
+          echo "Checked: $AFTER -> $UNTIL, scheduled: $count"
+
+          if [[ "$has_scheduled" == "true" ]]; then
+            jq -r '
+              .items[]?
+              | select((.path | type) == "string" and (.published | type) == "string")
+              | "Scheduled: \(.published) \(.path)"
+            ' "$result"
+          fi
+
+      - name: Generate GitHub App token
+        if: steps.scheduled.outputs.has_scheduled == 'true'
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.BLOG_DEPLOY_APP_CLIENT_ID }}
+          private-key: ${{ secrets.BLOG_DEPLOY_APP_PRIVATE_KEY }}
+          owner: Ovis
+          repositories: blog.hitsujin.jp
+          permission-contents: write
+
+      - name: Dispatch production deployment
+        if: steps.scheduled.outputs.has_scheduled == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api \
+            --method POST \
+            repos/Ovis/blog.hitsujin.jp/dispatches \
+            -f event_type=production
+
+      - name: Update scheduled publication state
+        if: steps.state-branch.outputs.exists == 'true'
+        env:
+          UNTIL: ${{ steps.capture-time.outputs.until }}
+        working-directory: ${{ env.STATE_DIR }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          jq \
+            --arg until "$UNTIL" \
+            '.lastCheckedAt = $until' \
+            "$STATE_FILE" > "$STATE_FILE.tmp"
+          mv "$STATE_FILE.tmp" "$STATE_FILE"
+
+          if git diff --quiet -- "$STATE_FILE"; then
+            echo "$STATE_FILE did not change while updating lastCheckedAt." >&2
+            exit 1
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$STATE_FILE"
+          GIT_AUTHOR_DATE="$UNTIL" GIT_COMMITTER_DATE="$UNTIL" \
+            git commit --amend --no-edit --date="$UNTIL"
+
+          for attempt in 1 2 3; do
+            if git push --force-with-lease origin "$STATE_BRANCH"; then
+              exit 0
+            fi
+
+            if [[ "$attempt" -lt 3 ]]; then
+              echo "State push failed (attempt $attempt/3); retrying in 5 seconds..." >&2
+              sleep 5
+            fi
+          done
+
+          echo "Failed to push scheduled publication state after 3 attempts." >&2
+          exit 1

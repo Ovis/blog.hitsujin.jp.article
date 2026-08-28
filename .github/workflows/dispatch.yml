@@ -25,8 +25,10 @@ jobs:
           permission-contents: write
 
       - name: Dispatch production deployment
-        uses: peter-evans/repository-dispatch@v4
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          repository: Ovis/blog.hitsujin.jp
-          event-type: production
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh api \
+            --method POST \
+            repos/Ovis/blog.hitsujin.jp/dispatches \
+            -f event_type=production
