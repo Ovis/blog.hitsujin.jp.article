@@ -96,4 +96,4 @@ SwitchBotのAPIだと赤外線リモコンで学習させたボタン情報を�
 
 GitHubで公開しているので、同じようにSwitchBotとSTREAM DECKを使っている人がいれば試してみていただけると嬉しいです。  
 
-[oembed:"[https://github.com/Ovis/SwitchBot.StreamDeckPlugin](https://github.com/Ovis/SwitchBot.StreamDeckPlugin)"]
+[oembed:"https://github.com/Ovis/SwitchBot.StreamDeckPlugin"]
