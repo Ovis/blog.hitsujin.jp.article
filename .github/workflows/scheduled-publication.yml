@@ -44,7 +44,7 @@ jobs:
           fi
 
       - name: Checkout articles
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: master
           path: ${{ env.ARTICLE_DIR }}
@@ -94,7 +94,7 @@ jobs:
 
       - name: Checkout scheduled publication state
         if: steps.state-branch.outputs.exists == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ env.STATE_BRANCH }}
           path: ${{ env.STATE_DIR }}
