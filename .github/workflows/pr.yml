@@ -25,39 +25,9 @@ permissions:
   contents: read
 
 jobs:
-  compress-images:
-    name: Compress images
-    if: github.event_name == 'pull_request' && github.event.action != 'closed'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout article repository
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 0
-
-      - name: Compress images
-        id: compress
-        uses: Ovis/image-compression-action@main
-        with:
-          jpeg_max_quality: "80"
-          jpeg_compression_threshold: "5"
-          png_compression_threshold: "40"
-
-      - name: Commit compressed images
-        if: steps.compress.outputs.any_image_compressed == 'true'
-        uses: EndBug/add-and-commit@v10
-        with:
-          message: 'Compress images'
-          default_author: github_actions
-
   deploy-staging:
     name: Request staging deployment
     if: github.event_name == 'pull_request' && github.event.action != 'closed'
-    needs: compress-images
     runs-on: ubuntu-latest
 
     steps:
@@ -133,4 +103,3 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
           repository: Ovis/blog.hitsujin.jp
           event-type: close-staging
-
